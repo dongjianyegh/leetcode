@@ -4278,5 +4278,121 @@ public class SolutionAll {
         return newHead;
     }
 
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        if (numCourses == 0) {
+            return true;
+        }
+        if (prerequisites == null || prerequisites.length <= 0) {
+            return true;
+        }
+
+        int[] degree = new int[numCourses];
+        boolean[] visited = new boolean[numCourses];
+
+        List<Integer>[] graph = new List[numCourses];
+
+        for (int[] edge : prerequisites) {
+            final int from = edge[1];
+            final int to = edge[0];
+
+            degree[to]++;
+
+            if (graph[from] == null) {
+                graph[from] = new ArrayList<>();
+            }
+            graph[from].add(to);
+        }
+
+        boolean[] backstrace = new boolean[numCourses];
+
+        for (int i = 0; i < degree.length; ++i) {
+            if (degree[i] == 0) {
+                if (!courseDfs(visited, i, graph, backstrace)) {
+                    return false;
+                }
+            }
+        }
+
+        for (boolean visit : visited) {
+            if (!visit) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean courseDfs(boolean[] result, int index, List<Integer>[] graph, boolean[] visited) {
+        result[index] = true;
+        visited[index] = true;
+
+        List<Integer> tos = graph[index];
+
+        boolean res = true;
+        if (tos != null) {
+            for (int to : tos) {
+                if (visited[to]) {
+                    res = false;
+                    break;
+                }
+
+                if (!result[to]) {
+                    if (!courseDfs(result, to, graph, visited)) {
+                        res = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        visited[index] = false;
+        return res;
+    }
+
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        int[] result = new int[numCourses];
+        int curCnt = 0;
+
+        int[] degree = new int[numCourses];
+        List<Integer>[] graph = new List[numCourses];
+
+        for (int[] edge : prerequisites) {
+            final int from = edge[1];
+            final int to = edge[0];
+
+            degree[to]++;
+
+            if (graph[from] == null) {
+                graph[from] = new ArrayList<>();
+            }
+            graph[from].add(to);
+        }
+
+        Queue<Integer> queue = new LinkedList<>();
+
+        for (int i = 0; i < numCourses; ++i) {
+            if (degree[i] == 0) {
+                queue.add(i);
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i= 0; i < size; ++i) {
+                final int from = queue.poll();
+                result[curCnt++] = from;
+                List<Integer> tos = graph[from];
+                if (tos != null) {
+                    for (int to : tos) {
+                        if (--degree[to] == 0) {
+                            queue.add(to);
+                        }
+                    }
+                }
+            }
+        }
+
+        return curCnt == numCourses ? result : new int[0];
+    }
 
 }
