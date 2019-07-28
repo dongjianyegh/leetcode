@@ -4395,4 +4395,238 @@ public class SolutionAll {
         return curCnt == numCourses ? result : new int[0];
     }
 
+    private Trie mWordTrieRoot = null;
+    private List<String> mFindWordResult;
+    public List<String> findWords(char[][] board, String[] words) {
+        mWordTrieRoot = new Trie();
+        for (String word : words) {
+            addWord(mWordTrieRoot, word);
+        }
+
+        mFindWordResult = new ArrayList<>();
+
+        for (int i = 0; i < board.length; ++i) {
+            for (int j = 0; j < board[0].length; ++j) {
+                findWordDfs(board, i, j, mWordTrieRoot);
+            }
+        }
+
+        return mFindWordResult;
+    }
+
+    private void findWordDfs(char[][] board, int x, int y, Trie root) {
+        if (root == null) {
+            return;
+        }
+
+        final int idx = board[x][y] - 'a';
+        final Trie node = root.next[idx];
+        if (node == null) {
+            return;
+        }
+
+        board[x][y] = 0;
+        if (node.word) {
+            mFindWordResult.add(node.wordText);
+            node.word = false;
+        }
+
+        if (x - 1 >= 0 && board[x-1][y] != 0)
+            findWordDfs(board, x - 1, y, node);
+        if (y - 1 >= 0 && board[x][y-1] != 0)
+            findWordDfs(board, x, y-1, node);
+        if (x + 1 < board.length && board[x + 1][y] != 0)
+            findWordDfs(board, x + 1, y, node);
+        if (y + 1 < board[0].length && board[x][y+1] != 0)
+            findWordDfs(board, x, y + 1, node);
+
+        board[x][y] = (char) ('a' + idx);
+    }
+
+    public int robII(int[] nums) {
+        if (nums == null || nums.length <= 0) {
+            return 0;
+        }
+
+        if (nums.length  == 1)
+            return nums[0];
+        // 假设第一个可以取，那只能取到倒数第二个
+        int prepre = nums[0];
+        int pre = Math.max(nums[1], prepre);
+        int max = Math.max(prepre, pre);
+        for (int i = 2; i < nums.length - 1; ++i) {
+            int curMax = Math.max(nums[i] + prepre, pre);
+            max = Math.max(curMax, max);
+
+            prepre = pre;
+            pre = curMax;
+        }
+
+        prepre = 0;
+        pre = nums[1];
+        for (int i = 2; i < nums.length; ++i) {
+            int curMax = Math.max(nums[i] + prepre, pre);
+            max = Math.max(curMax, max);
+
+            prepre = pre;
+            pre = curMax;
+        }
+
+        return max;
+    }
+
+
+    private static class Trie {
+        private boolean word = false;
+        private String wordText;
+        private final Trie[] next = new Trie[26];
+    }
+
+    private void addWord(Trie root, String word) {
+        if (root == null)
+            return;
+
+        Trie node = root;
+        for (int i = 0; i < word.length(); ++i) {
+            final int idx = word.charAt(i) - 'a';
+            if (node.next[idx] == null) {
+                node.next[idx] = new Trie();
+            }
+            node = node.next[idx];
+        }
+        node.word = true;
+        node.wordText = word;
+    }
+
+    public String shortestPalindrome(String s) {
+        return "";
+    }
+
+    private int getLongestPalindrome(String s) {
+        return 0;
+    }
+
+    public int findKthLargest(int[] nums, int k) {
+        return findKthLargest(nums, nums.length - k, 0, nums.length - 1);
+    }
+
+    private int findKthLargest(int[] nums, int k, int start, int end) {
+        int partition = quickPartition(nums, start, end);
+        if (partition == k) {
+            return nums[partition];
+        } else if (partition > k) {
+            return findKthLargest(nums, k, start, partition - 1);
+        } else {
+            return findKthLargest(nums, k, partition + 1, end);
+        }
+    }
+
+    private int quickPartition(int[] nums, int start, int end) {
+        if (start >= end) {
+            return start;
+        }
+        int pivotIndex = new Random().nextInt(end - start) + start;
+
+        int base = nums[start];
+        nums[start] = nums[pivotIndex];
+        nums[pivotIndex] = base;
+
+        int i = start;
+        int j = end;
+
+        while (i < j) {
+            while (i < j && nums[j] >= base) j--;
+            while (i < j && nums[i] <= base) i++;
+            if (i < j) {
+                int temp = nums[i]; nums[i] = nums[j]; nums[j] = temp;
+            }
+        }
+        if (i != start) {
+            int temp = nums[i]; nums[i] = base; nums[start] = temp;
+        }
+
+        return i;
+    }
+
+
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> result = new ArrayList<>();
+        combinationSum3Dfs(k, 1, n, 0, new ArrayList<>(), result);
+        return result;
+    }
+
+    private void combinationSum3Dfs(int k, int idx, int n, int sum, List<Integer> backstrace, List<List<Integer>> result) {
+        if (backstrace.size() > k) {
+            return;
+        }
+
+        if (backstrace.size() == k) {
+            if (sum == n) {
+                result.add(new ArrayList<>(backstrace));
+            }
+            return;
+        }
+
+        for (int i = idx; i <= 9; ++i) {
+            backstrace.add(i);
+            combinationSum3Dfs(k, i + 1, n, sum + i, backstrace, result);
+            backstrace.remove(backstrace.size() - 1);
+        }
+    }
+
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Map<Integer, Integer> pos = new HashMap<>();
+        for (int i = 0; i < nums.length; ++ i) {
+            int num = nums[i];
+            Integer old = pos.get(num);
+            if (old != null && i - old <= k) {
+                return true;
+            } else {
+                pos.put(num, i);
+            }
+        }
+
+        return false;
+    }
+
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        TreeMap<Long, Integer> map = new TreeMap<>();
+
+        for (int i = 0; i < nums.length; ++i) {
+            final long num = nums[i];
+            final long min = num - t;
+            final long max = num + t;
+
+            Map.Entry<Long, Integer> floorEntry = map.floorEntry(max);
+            if (floorEntry != null && floorEntry.getKey() >= min && i - floorEntry.getValue() <= k) {
+                return true;
+            }
+
+            Map.Entry<Long, Integer> ceilEntry = map.ceilingEntry(min);
+            if (ceilEntry != null && ceilEntry.getKey() <= max && i - ceilEntry.getValue() <= k) {
+                return true;
+            }
+
+            map.put(num, i);
+        }
+
+        return false;
+    }
+
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+
+        final TreeNode left = root.left;
+        final TreeNode right = root.right;
+
+        root.right = left;
+        root.left = right;
+
+        invertTree(left);
+        invertTree(right);
+
+        return root;
+    }
 }

@@ -85,7 +85,25 @@ public class main {
 //		Integer b = 1;
 //		System.out.println(a == b);
 
-		String result = solution.fractionToDecimal(-1, -2147483648);
+//		String result = solution.fractionToDecimal(-1, -2147483648);
+//		System.out.println(result);
+
+//		char[][] board = {
+//			  {'a','b'},
+//		};
+//
+//		String[] words = {"ba"};
+//
+//		List<String> result = solution.findWords(board, words);
+
+//		int[] nums = {3,2,3,1,2,4,5,5,6};
+//		int k = 4;
+//
+//		int result = solution.findKthLargest(nums, k);
+
+		int n = 9;
+		int k = 3;
+		List<List<Integer>> result = solution.combinationSum3(k, n);
 		System.out.println(result);
 
 	}
