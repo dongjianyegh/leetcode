@@ -4629,4 +4629,229 @@ public class SolutionAll {
 
         return root;
     }
+
+    public int countNodes(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        final int leftHeight = getTreeHeight(root.left);
+        final int rightHeight = getTreeHeight(root.right);
+
+        if (rightHeight >= leftHeight) {
+            return (1 << leftHeight) + countNodes(root.right);
+        } else {
+            return (1 << rightHeight) + countNodes(root.left);
+        }
+    }
+
+    private int getTreeHeight(TreeNode root) {
+        if (root == null) {
+            return 0;
+        } else {
+            return 1 + getTreeHeight(root.left);
+        }
+    }
+
+    public int calculate(String s) {
+        if (s == null || s.length() <= 0) {
+            return 0;
+        }
+
+        Stack<Character> ops = new Stack<>();
+        Stack<Integer> nums = new Stack<>();
+
+        int t = 0;
+        boolean hasNum = false;
+
+        for (int i = 0; i < s.length(); ++i) {
+            final char c = s.charAt(i);
+
+            if (Character.isSpaceChar(c)) {
+                continue;
+            }
+            if (Character.isDigit(c)) {
+                t = t * 10 + c - '0';
+                hasNum = true;
+                continue;
+            }
+
+            if (!ops.isEmpty()) {
+                if (ops.peek() == '/') {
+                    t = nums.pop() / t;
+                    ops.pop();
+                } else if (ops.peek() == '*') {
+                    t = nums.pop() * t;
+                    ops.pop();
+                }
+            }
+
+            nums.push(t);
+            ops.push(c);
+            t = 0;
+            hasNum = false;
+        }
+
+        if (hasNum) {
+            if (ops.isEmpty()) return t;
+            if (ops.peek() == '/') {
+                t = nums.pop() / t;
+                ops.pop();
+            } else if (ops.peek() == '*') {
+                t = nums.pop() * t;
+                ops.pop();
+            }
+        }
+        nums.push(t);
+
+        int result = 0;
+        while (!ops.isEmpty()) {
+            final char op = ops.pop();
+            if (op == '+') result += nums.pop();
+            else result -= nums.pop();
+        }
+
+        return nums.pop() + result;
+    }
+
+    private int calculateIdx = 0;
+    public int calculateII(String s) {
+
+        Stack<Integer> stack = new Stack<>();
+        char op = '+';
+
+        int n = 0;
+        for (; calculateIdx < s.length() && op != ')'; calculateIdx++) {
+            final char c = s.charAt(calculateIdx);
+
+            if (Character.isDigit(c)) {
+                n = parseNum(s);
+            }
+
+            if (c == ' ') continue;
+            if (c == '(') {
+                calculateIdx++;
+                n = calculateII(s);
+            }
+
+            if (op == '+') stack.push(n);
+            else if (op == '-') stack.push(-n);
+            else if (op == '*') stack.push(stack.pop() * n);
+            else if (op == '/') stack.push(stack.pop() / n);
+
+            if (calculateIdx < s.length())
+                op = s.charAt(calculateIdx);
+
+        }
+
+        int result = 0;
+        while (!stack.isEmpty()) {
+            result += stack.pop();
+        }
+
+        return result;
+    }
+
+    private int parseNum(String s) {
+        int result = 0;
+        while (calculateIdx < s.length() && Character.isDigit(s.charAt(calculateIdx))) {
+            result = result * 10 + s.charAt(calculateIdx) - '0';
+            calculateIdx++;
+        }
+        return result;
+    }
+
+    public List<String> summaryRanges(int[] nums) {
+        ArrayList<String> result = new ArrayList<>();
+
+        int i = 0;
+        int start = 0;
+        while (i < nums.length) {
+            while (i+1 < nums.length && nums[i + 1] == nums[i] + 1) {
+                i++;
+            }
+            String item;
+            if (i > start)
+                item = "" + nums[start] + "->" + nums[i];
+            else
+                item = "" + nums[start];
+            result.add(item);
+            i++;
+            start = i;
+        }
+
+        return result;
+    }
+
+    public List<Integer> majorityElementII(int[] nums) {
+        List<Integer> result = new ArrayList<>();
+        if (nums == null || nums.length <= 0) {
+            return result;
+        }
+        if (nums.length == 1) {
+            result.add(nums[0]);
+            return result;
+        }
+
+        int a = -1;
+        int b = -1;
+        int acnt = 0;
+        int bcnt = 0;
+
+        for (int num : nums) {
+            if (acnt == 0 && bcnt == 0) {
+                a = num;
+                acnt = 1;
+            } else if (acnt != 0 && bcnt == 0) {
+                if (a == num) {
+                    acnt++;
+                } else {
+                    b = num;
+                    bcnt = 1;
+                }
+            } else if (acnt == 0 && bcnt != 0) {
+                if (b == num) {
+                    bcnt++;
+                } else {
+                    acnt = 1;
+                    a = num;
+                }
+            } else {
+                if (a == num) {
+                    acnt++;
+                } else if (b == num) {
+                    bcnt++;
+                } else {
+                    acnt--;
+                    bcnt--;
+                }
+            }
+        }
+
+        int times1 = 0;
+        int times2 = 0;
+        for (int num : nums) {
+            if (acnt > 0 && num == a) times1++;
+            if (bcnt > 0 && num == b) times2++;
+        }
+        if (times1 > nums.length / 3) {
+            result.add(a);
+        }
+        if (times2 > nums.length / 2) {
+            result.add(b);
+        }
+
+        return result;
+    }
+
+    public boolean isPowerOfTwo(int n) {
+        if (n == 0) {
+            return false;
+        }
+        return 0 == (n & (n - 1));
+    }
+
+    public int countDigitOne(int n) {
+
+    }
 }

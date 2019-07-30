@@ -101,9 +101,12 @@ public class main {
 //
 //		int result = solution.findKthLargest(nums, k);
 
-		int n = 9;
-		int k = 3;
-		List<List<Integer>> result = solution.combinationSum3(k, n);
+//		int n = 9;
+//		int k = 3;
+//		List<List<Integer>> result = solution.combinationSum3(k, n);
+
+		String s = "4";
+		int result = solution.calculateII(s);
 		System.out.println(result);
 
 	}
