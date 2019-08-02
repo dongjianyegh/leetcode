@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class main {
@@ -105,8 +106,35 @@ public class main {
 //		int k = 3;
 //		List<List<Integer>> result = solution.combinationSum3(k, n);
 
-		String s = "4";
-		int result = solution.calculateII(s);
+//		int[][] costs = {{14,2,11},{11,14,5},{14,3,10}};
+//		int[][] costs = {{5}};
+//		int result = solution.minCostII(costs);
+
+//		String[] words = {"wrt","wrf","er","ett","rftt"};
+//
+//		List<String> wordsList = Arrays.asList(":;ad");
+//
+//		String encode = solution.encode(wordsList);
+
+//		TreeNode root = new TreeNode(4);
+//		root.left = new TreeNode(3);
+//		root.right = new TreeNode(5);
+//		root.left.left = new TreeNode(2);
+//		root.right.right = new TreeNode(6);
+//
+//		TreeNode result = solution.inorderSuccessor(root, root.left.left);
+
+		int[][] rooms =
+				{
+						{2147483647,-1,0,2147483647},
+						{2147483647,2147483647,2147483647,-1},
+						{2147483647,-1,2147483647,-1},
+						{0,-1,2147483647,2147483647}
+				};
+
+		solution.wallsAndGates(rooms);
+		int result = 1;
+
 		System.out.println(result);
 
 	}
