@@ -1,6 +1,7 @@
 
 
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 public class Solution {
@@ -14810,6 +14811,89 @@ public class Solution {
 		} else {
 			insertIntoMaxTreeHelper(cur.right, val, false);
 		}
+	}
+
+	public  String transChineseMoney1(String s) {
+		String tmpnewchar = "";
+		for (int i = 0; i < s.length(); i++) {
+			char perchar = s.charAt(i);
+			if (perchar == '0')
+				tmpnewchar = tmpnewchar + "零";
+			if (perchar == '1')
+				tmpnewchar = tmpnewchar + "壹";
+			if (perchar == '2')
+				tmpnewchar = tmpnewchar + "贰";
+			if (perchar == '3')
+				tmpnewchar = tmpnewchar + "叁";
+			if (perchar == '4')
+				tmpnewchar = tmpnewchar + "肆";
+			if (perchar == '5')
+				tmpnewchar = tmpnewchar + "伍";
+			if (perchar == '6')
+				tmpnewchar = tmpnewchar + "陆";
+			if (perchar == '7')
+				tmpnewchar = tmpnewchar + "柒";
+			if (perchar == '8')
+				tmpnewchar = tmpnewchar + "捌";
+			if (perchar == '9')
+				tmpnewchar = tmpnewchar + "玖";
+			int j = s.length() - i - 1;
+			if (j == 0)
+				tmpnewchar = tmpnewchar + "圆";
+			if (j == 1 && perchar != 0)
+				tmpnewchar = tmpnewchar + "拾";
+			if (j == 2 && perchar != 0)
+				tmpnewchar = tmpnewchar + "佰";
+			if (j == 3 && perchar != 0)
+				tmpnewchar = tmpnewchar + "仟";
+			if (j == 4 && perchar != 0)
+				tmpnewchar = tmpnewchar + "万";
+			if (j == 5 && perchar != 0)
+				tmpnewchar = tmpnewchar + "拾";
+			if (j == 6 && perchar != 0)
+				tmpnewchar = tmpnewchar + "佰";
+			if (j == 7 && perchar != 0)
+				tmpnewchar = tmpnewchar + "仟";
+			if (j == 8 && perchar != 0)
+				tmpnewchar = tmpnewchar + "亿";
+			if (j == 9 && perchar != 0)
+				tmpnewchar = tmpnewchar + "拾";
+		}
+		return tmpnewchar;
+	}
+
+
+	final ReentrantLock mLock = new ReentrantLock(true);
+
+	public int testNonSync() {
+		int a = 0;
+		for (int i = 0; i < 10; ++i) {
+			a += i;
+		}
+		return a;
+	}
+
+	public synchronized int testSync() {
+		int a = 0;
+		for (int i = 0; i < 10; ++i) {
+			a += i;
+		}
+		return a;
+	}
+
+	public int testLock() {
+		mLock.lock();
+
+		try {
+			int a = 0;
+			for (int i = 0; i < 10; ++i) {
+				a += i;
+			}
+			return a;
+		} finally {
+			mLock.unlock();
+		}
+
 	}
 
 }
